@@ -20,7 +20,7 @@ App.prototype.init = function(){
     });
 
     self.rooms = roomKey;
-
+    self.addRoom('All');
     _.each(self.rooms,function(val,key){
       self.addRoom(key);
     });
@@ -84,9 +84,36 @@ App.prototype.addRoom = function(roomname) {
   $('#roomSelect').append($('<option></option>').text(roomname));
 };
 
+var changeRoom = function(event){
+  var room = $('#roomSelect').val();
+  var self = app;
+  self.clearMessages();
+  $('#roomSelect').children().remove();
+  if(room === 'All'){
+    app.init();
+    return;
+  }
+  self.fetch(function(data){
+  self.messages = data.results;
+    
+    _.each(data.results, function(msg) {
+      if (msg.roomname === room) {
+        self.addMessage(msg);
+      }
+      self.rooms[msg.roomname] = msg.roomname;
+    });
+
+    self.addRoom('All');
+    _.each(self.rooms,function(val,key){
+      self.addRoom(val);
+    });
+    $('#roomSelect').children('option:contains('+room+')').attr('selected','selected');
+  });
+};
+
 App.prototype.addFriend = function(event) {
   event.preventDefault();
-  var friend = $(this).text();
+  var friend = $(self).text();
   if (!app.friends[friend]) {
     $('#friendSelect').append($('<option></option>').text($(this).text()));
     app.friends[friend] = true;
@@ -112,6 +139,10 @@ var app = new App();
 app.init();
 setInterval(deleteDirtyPost, 15000);
 
+/////////////////////////////////////////////////////////////////////
+// Event Listeners                                                 //
+/////////////////////////////////////////////////////////////////////
+
 $(document).on('click', '#submitMsg', function(event){
   event.preventDefault();
   var message = {
@@ -128,6 +159,8 @@ $(document).on('click', '#submitMsg', function(event){
 });
 
 $(document).on('click', 'a.user-name', app.addFriend);
+
+$(document).change('#roomSelect', changeRoom);
 
 /////////////////////////////////////////////////////////////////////
 //Attack Scripts?                                                  //
