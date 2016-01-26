@@ -11,7 +11,7 @@ App.prototype.init = function(){
   this.fetch(function(data){
     roomKey = {};
     self.messages = data.results;
-    
+
     _.each( data.results,
       function(msg){
         self.addMessage(msg);
@@ -72,14 +72,21 @@ App.prototype.addMessage = function(message) {
   var h = time.getHours();
   var m = time.getMinutes();
 
-  $('#chats').append($('<div class="message"></div>'))
-  .append($('<a href="#" class="user-name"></a>').text(message.username))
-  .append($('<time></time>').attr('datetime', message.createdAt).text(h + ':' + m + (h < 12 ? ' AM' : ' PM')))
-  .append($('<p></p>').text(message.text));
+	var $message = $('<div class="message"></div>');
+
+	$('<a href="#" class="user-name"></a>').text(message.username).appendTo($message);
+
+	$('<time></time>').attr('datetime', message.createdAt).text(h + ':' + m + (h < 12 ? ' AM' : ' PM')).appendTo($message);
+
+	$('<p></p>').text(message.text).appendTo($message);
+
+	$('#chats').prepend($message);
+
+	$('#chats').scrollTop = $('#chats').scrollHeight;
 };
 
 App.prototype.addRoom = function(roomname) {
-  $('#roomSelect').append($('<option></option>').text(roomname));
+  $('ul#rooms').append($('<li></li>').text(roomname));
 };
 
 App.prototype.addFriend = function(event) {
@@ -99,7 +106,7 @@ $(document).on('click', '#submitMsg', function(event){
   var message = {
     username: 'fsociety',
     text: $('#chatBox').val(),
-    roomname: 'hr38'
+    roomname: 'lobby'
   };
 
   app.send(message, function(){
