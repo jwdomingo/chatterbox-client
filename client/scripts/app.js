@@ -48,6 +48,7 @@ App.prototype.fetch = function(_successCallBack) {
   return $.ajax({
     url: 'https://api.parse.com/1/classes/chatterbox',
     type: 'GET',
+    data: {'order': '-updatedAt'},
     contentType: 'application/json',
     success: function (data) {
       if(_successCallBack){
@@ -66,7 +67,13 @@ App.prototype.clearMessages = function(){
 };
 
 App.prototype.addMessage = function(message) {
-  $('#chats').append($('<p></p>').text(message.text));
+  var time = new Date(message.createdAt);
+  var h = time.getHours();
+  var m = time.getMinutes();
+
+  $('#chats').append($('<a href="#" class="user-name"></a>').text(message.username))
+  .append($('<time></time>').attr('datetime', message.createdAt).text(h + ':' + m + (h < 12 ? ' AM' : ' PM')))
+  .append($('<p></p>').text(message.text))
 };
 
 App.prototype.addRoom = function(roomname) {
