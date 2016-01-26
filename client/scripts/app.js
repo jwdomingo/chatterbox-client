@@ -3,6 +3,7 @@ var App = function(){
   this.server = "https://api.parse.com/1/classes/chatterbox";
   this.messages = [];
   this.rooms = {};
+  this.friends = {};
 };
 
 App.prototype.init = function(){
@@ -71,13 +72,23 @@ App.prototype.addMessage = function(message) {
   var h = time.getHours();
   var m = time.getMinutes();
 
-  $('#chats').append($('<a href="#" class="user-name"></a>').text(message.username))
+  $('#chats').append($('<div class="message"></div>'))
+  .append($('<a href="#" class="user-name"></a>').text(message.username))
   .append($('<time></time>').attr('datetime', message.createdAt).text(h + ':' + m + (h < 12 ? ' AM' : ' PM')))
   .append($('<p></p>').text(message.text));
 };
 
 App.prototype.addRoom = function(roomname) {
   $('#roomSelect').append($('<option></option>').text(roomname));
+};
+
+App.prototype.addFriend = function(event) {
+  event.preventDefault();
+  var friend = $(this).text();
+  if (!app.friends[friend]) {
+    $('#friendSelect').append($('<option></option>').text($(this).text()));
+    app.friends[friend] = true;
+  }
 };
 
 var app = new App();
@@ -97,6 +108,8 @@ $(document).on('click', '#submitMsg', function(event){
   app.clearMessages();
   app.init();
 });
+
+$(document).on('click', 'a.user-name', app.addFriend);
 
 // var attackMsg = function(inputScript){
 //   return {
