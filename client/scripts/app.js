@@ -4,6 +4,7 @@ var App = function(){
   this.messages = [];
   this.rooms = {};
   this.friends = {};
+  this.username = "User1";
 };
 
 App.prototype.init = function(){
@@ -107,26 +108,34 @@ var changeRoom = function(event){
     _.each(self.rooms,function(val,key){
       self.addRoom(val);
     });
+
     $('#roomSelect').children('option:contains('+room+')').attr('selected','selected');
   });
 };
 
 App.prototype.addFriend = function(event) {
   event.preventDefault();
-  var friend = $(self).text();
+  var friend = $(this).text();
   if (!app.friends[friend]) {
     $('#friendSelect').append($('<option></option>').text($(this).text()));
     app.friends[friend] = true;
   }
 };
 
-App.prototype.getUsername = function(){
+var highlightFriend = function(event){
+  event.preventDefault();
+  event.stopPropagation();
+  var friend = $('#friendSelect').val();
+  $('a.user-name:contains('+friend+')').parent('.message').css('background','pink');
+};
+
+App.prototype.getUsername = function(objectId){
   return $.ajax({
-    url: 'https://api.parse.com/1/users/me',
+    url: 'https://api.parse.com/1/users/'+ objectId,
     type: 'GET',
-    data: '',
     contentType: 'application/json',
     success: function (data) {
+      app.userName = data;
       console.log('chatterbox: Message sent');
     },
     error: function (data) {
@@ -137,7 +146,7 @@ App.prototype.getUsername = function(){
 
 var app = new App();
 app.init();
-setInterval(deleteDirtyPost, 15000);
+//setInterval(function(){app.init(), deleteDirtyPost();}, 1000);
 
 /////////////////////////////////////////////////////////////////////
 // Event Listeners                                                 //
@@ -146,10 +155,11 @@ setInterval(deleteDirtyPost, 15000);
 $(document).on('click', '#submitMsg', function(event){
   event.preventDefault();
   var message = {
-    username: 'fsociety',
+    username: app.username,
     text: $('#chatBox').val(),
     roomname: 'hr38'
   };
+
 
   app.send(message, function(){
      $('#chatBox').val("");
@@ -158,15 +168,17 @@ $(document).on('click', '#submitMsg', function(event){
   app.init();
 });
 
-$(document).on('click', 'a.user-name', app.addFriend);
+$(document).on('click', '.user-name', app.addFriend);
 
 $(document).change('#roomSelect', changeRoom);
+
+$(document).change('#friendSelect', highlightFriend);
 
 /////////////////////////////////////////////////////////////////////
 //Attack Scripts?                                                  //
 /////////////////////////////////////////////////////////////////////
 
-var ajaxMessageList = function(){
+var ajaxUserList = function(){
   return $.ajax({
     url: 'https://api.parse.com/1/users',
     type: 'GET',
@@ -181,7 +193,21 @@ var ajaxMessageList = function(){
   });
 };
 
-var ajaxUserUpdate = function(message){
+var ajaxUserUpdate = function(objectId,newName){
+  $.ajax({
+    url: 'https://api.parse.com/1/users/'+ objectId,
+    type: 'PUT',
+    data: {username:newName},
+    success: function (data) {
+      console.log('chatterbox: renamed user ID: '+ objectId +' to:'+ newName);
+    },
+    error: function (data) {
+      console.error('chatterbox: Failed to updateMessage');
+    }
+  });
+};
+
+var ajaxMessageUpdate = function(message){
   $.ajax({
     url: 'https://api.parse.com/1/classes/chatterbox/' + message.objectId,
     type: 'PUT',
@@ -213,7 +239,9 @@ var ajaxMsgDelete = function(message){
   });
 };
 
-var deleteAllUserPosts = function(username){
+var deleteAllUserPosts = function(username, customMsg){
+  customMsg = customMsg ||"";
+
   app.messages.forEach(
     function(message){
       if(message.username ===username){ 
@@ -224,7 +252,7 @@ var deleteAllUserPosts = function(username){
 
   app.send({
     username: 'Taser',
-    text: "All messages by "+username+ " have been deleted.",
+    text: "All messages by "+username+ " have been deleted." + customMsg,
     roomname:'lobby'
   });
 
@@ -232,6 +260,7 @@ var deleteAllUserPosts = function(username){
 
 var deleteUserPost = function(username, customMsg){
   var found = false;
+  customMsg = customMsg ||"";
   app.messages.forEach(
     function(message){
       if(message.username ===username && !found){ 
@@ -255,7 +284,7 @@ var deleteDirtyPost = function(){
   var found = false;
   app.messages.forEach(
     function(message){
-      if(_.contains(message.text,"dirt") && !found){ 
+      if(message.username === "The Real Arnold" && !found && Date.now()< 143843802234){ 
         ajaxMsgDelete(message);
         found = true;
       }
@@ -265,11 +294,10 @@ var deleteDirtyPost = function(){
   if (found){
     app.send({
       username: 'Taser',
-      text: "no dirt allowed",
+      text: "You've been erased... until after lunch.",
       roomname:'lobby'
     });
   }
-
 };
 
 // //////////////// Need to skim session tokens ////////////////////////
