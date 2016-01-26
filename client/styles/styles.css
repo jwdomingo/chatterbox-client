@@ -1,25 +1,115 @@
 body {
-    background: #eee;
-    text-align: center;
-    padding: 0 25px;
-    font-family: arial, sans-serif;
+  background: #eee;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  text-align: center;
+  padding: 0;
+  margin: 0;
 }
 
-#main, #chats {
-    width: 500px;
-    margin: auto;
-    text-align: left;
-    background: white;
-    padding: 50px 60px;
-    border: solid #ddd;
-    border-width: 0 1px 1px 1px;
+body, input {
+  font-family: 'Lato', sans-serif;
 }
 
-#main h1 {
-    margin-top: 0;
-    font-size: 35px;
-    margin-bottom: 5px;
-    padding: 5px;
+aside {
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 220px;
+  background: #0d7e83;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: left;
+}
+
+aside h1 {
+  font-size: 35px;
+  margin: 20px 20px 5px;
+  padding: 0;
+  color: white;
+}
+
+aside h5 {
+  margin: 20px 0 5px 20px;
+  text-transform: uppercase;
+}
+
+input#user {
+  margin: 20px 0 5px 20px;
+  color: white;
+  opacity: 0.6;
+  background: none;
+  border: none;
+  font-size: 0.9em;
+  text-transform: none;
+  font-weight: 300;
+  margin-top: 0;
+}
+
+input#user::before {
+  content: '●';
+  font-size: 1.3em;
+  color: #f79f66;
+  margin: 0 5px 0 0;
+}
+
+aside ul {
+  margin: 0;
+  list-style: none;
+  cursor: pointer;
+  padding: 0;
+  overflow-y: auto;
+  font-weight: 300;
+}
+
+aside ul li {
+  margin: 0 0 0 -5px;
+  font-size: 0.9em;
+  padding: 2px 0 2px 25px;
+  width: 205px;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+aside ul li::before {
+  content: '#';
+  font-size: 1.1em;
+  font-weight: 200;
+  opacity: 0.6;
+  margin: 0 8px 0 0;
+}
+
+aside ul li:hover {
+  background: #f79f66;
+  opacity: 0.6;
+}
+
+aside ul li.selected {
+  opacity: 1;
+}
+
+#chats {
+  position: fixed;
+  z-index: 0;
+  right: 0;
+  width: 100vw;
+  height: 90vh;
+  margin: 0;
+  text-align: left;
+  background: white;
+  border: solid #ddd;
+  border-width: 0;
+  overflow-y: scroll;
+}
+
+#main {
+  position: fixed;
+  bottom: 20px;
+  left: 220px;
+  height: 10vh;
+  width: 80vw;
 }
 
 #main h1 span {
@@ -59,17 +149,29 @@ form input[type=text] {
     padding: 5px;
 }
 
-.chat {
-    padding: 5px;
-    margin-bottom: 5px;
-    background-color: #eee;
+.message {
+  padding: 5px 0 5px 245px;
+  margin: 0;
+  background-color: #eee;
 }
 
-.chat .username {
-    font-weight: 800;
+a.user-name, a.user-name:visited, a.user-name:active {
+  color: #2c2d30;
+  font-weight: 800;
+  text-decoration: none;
+  margin-right: 10px;
 }
 
-.chat:hover {
+.message a.user-name:hover {
+  text-decoration: underline;
+}
+
+.message time {
+  color: #9e9ea6;
+  font-size: 0.8em;
+}
+
+.message:hover {
     background-color: #ddd;
 }
 
