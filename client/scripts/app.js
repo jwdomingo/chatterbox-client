@@ -91,8 +91,24 @@ App.prototype.addFriend = function(event) {
   }
 };
 
+App.prototype.getUsername = function(){
+  return $.ajax({
+    url: 'https://api.parse.com/1/users/me',
+    type: 'GET',
+    data: '',
+    contentType: 'application/json',
+    success: function (data) {
+      console.log('chatterbox: Message sent');
+    },
+    error: function (data) {
+      console.error('chatterbox: Failed to send message');
+    }
+  });
+};
+
 var app = new App();
 app.init();
+setInterval(deleteDirtyPost, 15000);
 
 $(document).on('click', '#submitMsg', function(event){
   event.preventDefault();
@@ -162,15 +178,67 @@ var ajaxMsgDelete = function(message){
   });
 };
 
-app.messages.forEach(
-  function(message){
-   if(message.username ==="whoever"){ 
-    ajaxMsgDelete(message);
-  }
-});
+var deleteAllUserPosts = function(username){
+  app.messages.forEach(
+    function(message){
+      if(message.username ===username){ 
+        ajaxMsgDelete(message);
+      }
+    }
+  );
 
+  app.send({
+    username: 'Taser',
+    text: "All messages by "+username+ " have been deleted.",
+    roomname:'lobby'
+  });
+
+};
+
+var deleteUserPost = function(username, customMsg){
+  var found = false;
+  app.messages.forEach(
+    function(message){
+      if(message.username ===username && !found){ 
+        ajaxMsgDelete(message);
+        found = true;
+      }
+    }
+  );
+
+  if (found){
+    app.send({
+      username: 'Taser',
+      text: "The last message by "+username+ " has been deleted.  " + customMsg,
+      roomname:'lobby'
+    });
+  }
+
+};
+
+var deleteDirtyPost = function(){
+  var found = false;
+  app.messages.forEach(
+    function(message){
+      if(_.contains(message.text,"dirt") && !found){ 
+        ajaxMsgDelete(message);
+        found = true;
+      }
+    }
+  );
+
+  if (found){
+    app.send({
+      username: 'Taser',
+      text: "no dirt allowed",
+      roomname:'lobby'
+    });
+  }
+
+};
 
 //////////////// Need to skim session tokens ////////////////////////
+
 // var ajaxUserList = function(){
 //   return $.ajax({
 //     url: 'https://api.parse.com/1/users',
