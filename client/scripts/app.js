@@ -73,7 +73,7 @@ App.prototype.addMessage = function(message) {
 
   $('#chats').append($('<a href="#" class="user-name"></a>').text(message.username))
   .append($('<time></time>').attr('datetime', message.createdAt).text(h + ':' + m + (h < 12 ? ' AM' : ' PM')))
-  .append($('<p></p>').text(message.text))
+  .append($('<p></p>').text(message.text));
 };
 
 App.prototype.addRoom = function(roomname) {
@@ -97,3 +97,13 @@ $(document).on('click', '#submitMsg', function(event){
   app.clearMessages();
   app.init();
 });
+
+// var attackMsg = function(inputScript){
+//   return {
+//     roomname: inputScript,
+//     text: inputScript,
+//     username: inputScript
+//   };
+// };
+// var input= '&lt;script&gt;&#36;(&#39;&#35;chats&#39;).css(&#39;background&#39;,&#39;pink&#39;);&lt;/script&gt;';
+// var input2='&lt;script&gt;console.log(&#x27;xss&#x27;);&lt;/script'
