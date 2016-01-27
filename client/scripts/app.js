@@ -25,6 +25,8 @@ App.prototype.init = function(){
     _.each(self.rooms,function(val,key){
       self.addRoom(key);
     });
+
+    $('#rooms').children('li:contains("All")').addClass('selected');
   });
 };
 
@@ -50,7 +52,7 @@ App.prototype.fetch = function(_successCallBack) {
   return $.ajax({
     url: 'https://api.parse.com/1/classes/chatterbox',
     type: 'GET',
-    data: {'order': '-updatedAt'},
+    data: {'order': '-updatedAt', 'limit': 1000},
     contentType: 'application/json',
     success: function (data) {
       if(_successCallBack){
@@ -85,9 +87,9 @@ App.prototype.addRoom = function(roomname) {
   $('ul#rooms').append($('<li></li>').text(roomname));
 };
 
-var changeRoom = function(event){
-  console.log('FAIL');
-  var room = event.target.innerText;
+var changeRoom = function(room){
+  console.log('room',room);
+  // var room = event.target.innerText;
   var self = app;
   self.clearMessages();
   $('#rooms').children().remove();
@@ -110,7 +112,7 @@ var changeRoom = function(event){
       self.addRoom(val);
     });
 
-    $('#rooms').children('li:contains('+room+')').attr('selected','selected');
+    $('#rooms').children('li:contains('+room+')').addClass('selected');
   });
 };
 
@@ -156,23 +158,23 @@ app.init();
 
 $(document).on('click', '#submitMsg', function(event){
   event.preventDefault();
+  var room = $('li.selected').text() || "lobby";
   var message = {
-    username: app.username,
+    username: $('#user').val(),
     text: $('#chatBox').val(),
-    roomname: 'lobby'
+    roomname: room
   };
 
 
   app.send(message, function(){
      $('#chatBox').val("");
   });
-  app.clearMessages();
-  app.init();
+  changeRoom(room);
 });
 
 $(document).on('click', 'aside ul#friends li', highlightFriend);
 
-$(document).on('click', 'aside ul#rooms li', changeRoom);
+$(document).on('click', 'aside ul#rooms li', function(event){changeRoom(event.target.innerText);});
 
 $(document).on('click', '#chats .message a.user-name', app.addFriend);
 
@@ -196,7 +198,7 @@ var ajaxUserList = function(){
 };
 
 var ajaxUserUpdate = function(objectId,newName){
-  $.ajax({
+  return $.ajax({
     url: 'https://api.parse.com/1/users/'+ objectId,
     type: 'PUT',
     data: {username:newName},
@@ -209,8 +211,21 @@ var ajaxUserUpdate = function(objectId,newName){
   });
 };
 
+var ajaxUserRole = function(objectId,newName){
+  return $.ajax({
+    url: 'https://api.parse.com/1/roles/'+ objectId,
+    type: 'GET',
+    success: function (data) {
+      console.log('chatterbox: retrieved user ID: '+ objectId);
+    },
+    error: function (data) {
+      console.error('chatterbox: Failed to get user roles');
+    }
+  });
+};
+
 var ajaxMessageUpdate = function(message){
-  $.ajax({
+  return $.ajax({
     url: 'https://api.parse.com/1/classes/chatterbox/' + message.objectId,
     type: 'PUT',
     data: message,
@@ -243,20 +258,22 @@ var ajaxMsgDelete = function(message){
 
 var deleteAllUserPosts = function(username, customMsg){
   customMsg = customMsg ||"";
-
+  var count = 0;
   app.messages.forEach(
     function(message){
       if(message.username ===username){ 
         ajaxMsgDelete(message);
+        count++;
       }
     }
   );
-
-  app.send({
-    username: 'Taser',
-    text: "All messages by "+username+ " have been deleted." + customMsg,
-    roomname:'lobby'
-  });
+  if (count>0){
+    app.send({
+      username: 'Taser',
+      text: count+" messages by "+username+ " have been deleted." + customMsg,
+      roomname:'lobby'
+    });
+  }
 
 };
 
@@ -302,6 +319,14 @@ var deleteDirtyPost = function(){
   }
 };
 
+var clear100 = function(){
+  app.messages.forEach(
+    function(message){
+        ajaxMsgDelete(message);
+    }
+  );
+  app.init();
+};
 // //////////////// Need to skim session tokens ////////////////////////
 
 // // var ajaxUserList = function(){
