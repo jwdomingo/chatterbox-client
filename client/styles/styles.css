@@ -56,6 +56,7 @@ input#user::before {
 }
 
 aside ul {
+  height: 60vh;
   margin: 0;
   list-style: none;
   cursor: pointer;
@@ -153,6 +154,10 @@ form input[type=text] {
   padding: 5px 0 5px 245px;
   margin: 0;
   background-color: #eee;
+}
+
+.message.friend{
+  background: pink;
 }
 
 a.user-name, a.user-name:visited, a.user-name:active {
