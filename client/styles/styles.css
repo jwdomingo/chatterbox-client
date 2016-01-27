@@ -89,6 +89,7 @@ aside ul li:hover {
 
 aside ul li.selected {
   opacity: 1;
+  background: #f79f66;
 }
 
 #chats {
