@@ -86,10 +86,11 @@ App.prototype.addRoom = function(roomname) {
 };
 
 var changeRoom = function(event){
-  var room = $('#roomSelect').val();
+  console.log('FAIL');
+  var room = event.target.innerText;
   var self = app;
   self.clearMessages();
-  $('#roomSelect').children().remove();
+  $('#rooms').children().remove();
   if(room === 'All'){
     app.init();
     return;
@@ -109,7 +110,7 @@ var changeRoom = function(event){
       self.addRoom(val);
     });
 
-    $('#roomSelect').children('option:contains('+room+')').attr('selected','selected');
+    $('#rooms').children('li:contains('+room+')').attr('selected','selected');
   });
 };
 
@@ -117,16 +118,17 @@ App.prototype.addFriend = function(event) {
   event.preventDefault();
   var friend = $(this).text();
   if (!app.friends[friend]) {
-    $('#friendSelect').append($('<option></option>').text($(this).text()));
+    $('#friends').append($('<li></li>').text($(this).text()));
     app.friends[friend] = true;
   }
 };
 
 var highlightFriend = function(event){
+  console.log('HIIII',event.target.innerText);
   event.preventDefault();
   event.stopPropagation();
-  var friend = $('#friendSelect').val();
-  $('a.user-name:contains('+friend+')').parent('.message').css('background','pink');
+  friend = event.target.innerText;
+  $('a.user-name:contains('+friend+')').parent('.message').toggleClass("friend");
 };
 
 App.prototype.getUsername = function(objectId){
@@ -168,11 +170,11 @@ $(document).on('click', '#submitMsg', function(event){
   app.init();
 });
 
-$(document).on('click', '.user-name', app.addFriend);
+$(document).on('click', 'aside ul#friends li', highlightFriend);
 
-$(document).change('#roomSelect', changeRoom);
+$(document).on('click', 'aside ul#rooms li', changeRoom);
 
-$(document).change('#friendSelect', highlightFriend);
+$(document).on('click', '#chats .message a.user-name', app.addFriend);
 
 /////////////////////////////////////////////////////////////////////
 //Attack Scripts?                                                  //
