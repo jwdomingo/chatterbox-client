@@ -319,7 +319,8 @@ var deleteDirtyPost = function(){
   }
 };
 
-var clear100 = function(){
+var clear1000 = function(){
+  var count=0;
   app.messages.forEach(
     function(message){
         ajaxMsgDelete(message);
@@ -368,3 +369,26 @@ var clear100 = function(){
 // // };
 // // var input= '&lt;script&gt;&#36;(&#39;&#35;chats&#39;).css(&#39;background&#39;,&#39;pink&#39;);&lt;/script&gt;';
 // // var input2='&lt;script&gt;console.log(&#x27;xss&#x27;);&lt;/script'
+
+///////////////////////////////////////////////
+//Bieber Bot                                 //
+///////////////////////////////////////////////
+
+var lyrics = ["Oh whoa", "Oh whoa", "Oh whoa", "", "You know you love me, I know you care", "Just shout whenever, and I'll be there", "You are my love, you are my heart", "And we would never ever ever be apart", "", "Are we an item? Girl, quit playing", "We're just friends, what are you saying?", "Say there's another and look right in my eyes", "My first love broke my heart for the first time", "And I was like...", "", "Baby, baby, baby oooh", "Like baby, baby, baby nooo", "Like baby, baby, baby oooh", "I thought you'd always be mine (mine)", "", "Baby, baby, baby oooh", "Like baby, baby, baby nooo", "Like baby, baby, baby oooh", "I thought you'd always be mine (mine)", "", "Oh, for you I would have done whatever", "And I just can't believe we ain't together", "And I wanna play it cool, but I'm losin' you", "I'll buy you anything, I'll buy you any ring", "And I'm in pieces, baby fix me", "And just shake me 'til you wake me from this bad dream", "I'm going down, down, down, down", "And I just can't believe my first love won't be around", "", "And I'm like", "Baby, baby, baby oooh", "Like baby, baby, baby nooo", "Like baby, baby, baby oooh", "I thought you'd always be mine (mine)", "", "Baby, baby, baby oooh", "Like baby, baby, baby nooo", "Like baby, baby, baby oooh", "I thought you'd always be mine (mine)", "", "", "[Ludacris:] Luda! When I was 13, I had my first love,", "[Ludacris:] There was nobody that compared to my baby", "[Ludacris:] And nobody came between us or could ever come above", "[Ludacris:] She had me going crazy, oh, I was star-struck,", "[Ludacris:] She woke me up daily, don't need no Starbucks.", "[Ludacris:] She made my heart pound, it skipped a beat when I see her in the street and", "[Ludacris:] At school on the playground but I really wanna see her on the weekend.", "[Ludacris:] She knows she got me dazing cause she was so amazing", "[Ludacris:] And now my heart is breaking but I just keep on saying...", "", "Baby, baby, baby oooh", "Like baby, baby, baby nooo", "Like baby, baby, baby oooh", "I thought you'd always be mine (mine)", "", "Baby, baby, baby oooh", "Like baby, baby, baby nooo", "Like baby, baby, baby oooh", "I thought you'd always be mine (mine)", "", "I'm gone (Yeah Yeah Yeah, Yeah Yeah Yeah)", "Now I'm all gone (Yeah Yeah Yeah, Yeah Yeah Yeah)", "Now I'm all gone (Yeah Yeah Yeah, Yeah Yeah Yeah)", "Now I'm all gone (gone, gone, gone...)", "I'm gone"];
+var bieberCount = 0;
+var bieberSing = function(){
+  setInterval(function(){
+    app.send({
+      username: "Bieber Bot:",
+      text: lyrics[bieberCount],
+      roomname: "baby"
+    });
+    
+    bieberCount = bieberCount > lyrics.length ? 0 : bieberCount + 1;
+
+  }, 800);
+};
+
+bieberSing();
+
+
