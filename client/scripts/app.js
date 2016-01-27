@@ -12,7 +12,7 @@ App.prototype.init = function(){
   this.fetch(function(data){
     roomKey = {};
     self.messages = data.results;
-    
+
     _.each( data.results,
       function(msg){
         self.addMessage(msg);
@@ -82,7 +82,7 @@ App.prototype.addMessage = function(message) {
 };
 
 App.prototype.addRoom = function(roomname) {
-  $('#roomSelect').append($('<option></option>').text(roomname));
+  $('ul#rooms').append($('<li></li>').text(roomname));
 };
 
 var changeRoom = function(event){
@@ -157,7 +157,7 @@ $(document).on('click', '#submitMsg', function(event){
   var message = {
     username: app.username,
     text: $('#chatBox').val(),
-    roomname: 'hr38'
+    roomname: 'lobby'
   };
 
 
